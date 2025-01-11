@@ -227,4 +227,4 @@ class OTPVerification(models.Model):
         ]
     
     def __str__(self):
-        return f"OTP for {self.user.email} - {self.otp_type}"
+        return f"OTP for {self.user.email} - {self.otp_type}"Commit at 2025-01-11T10:20:36
