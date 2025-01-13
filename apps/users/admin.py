@@ -65,4 +65,4 @@ class OTPVerificationAdmin(admin.ModelAdmin):
     list_display = ['user', 'otp_type', 'otp_code', 'is_used', 'expires_at', 'created_at']
     list_filter = ['otp_type', 'is_used', 'created_at']
     search_fields = ['user__email', 'otp_code']
-    readonly_fields = ['created_at']
+    readonly_fields = ['created_at']Commit at 2025-01-13T15:40:45
