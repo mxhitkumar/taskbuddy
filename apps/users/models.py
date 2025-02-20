@@ -230,3 +230,4 @@ class OTPVerification(models.Model):
         return f"OTP for {self.user.email} - {self.otp_type}"Commit at 2025-01-11T10:20:36
 Commit at 2025-01-20T16:26:20
 Commit at 2025-02-03T10:08:54
+Commit at 2025-02-20T13:01:40
