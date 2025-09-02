@@ -1,0 +1,54 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: service_booker
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - sb-network
+
+  redis:
+    image: redis:7
+    restart: always
+    networks:
+      - sb-network
+
+  web:
+    build: .
+    command: gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 3
+    volumes:
+      - .:/code
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+    ports:
+      - "8000:8000"
+    networks:
+      - sb-network
+
+  worker:
+    build: .
+    command: celery -A config worker -l info -Q default
+    volumes:
+      - .:/code
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+    networks:
+      - sb-network
+
+volumes:
+  db-data:
+
+
+networks:
+  sb-network:
