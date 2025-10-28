@@ -1,0 +1,68 @@
+"""
+Django Admin configuration for User models
+"""
+from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from apps.users.models import User, UserProfile, ServiceProviderProfile, OTPVerification
+
+
+@admin.register(User)
+class UserAdmin(BaseUserAdmin):
+    list_display = ['email', 'full_name', 'role', 'is_active', 'is_verified', 'created_at']
+    list_filter = ['role', 'is_active', 'is_verified', 'created_at']
+    search_fields = ['email', 'first_name', 'last_name', 'phone']
+    ordering = ['-created_at']
+    
+    fieldsets = (
+        (None, {'fields': ('email', 'password')}),
+        ('Personal Info', {'fields': ('first_name', 'last_name', 'phone')}),
+        ('Permissions', {'fields': ('role', 'is_active', 'is_staff', 'is_superuser', 'is_verified')}),
+        ('Important Dates', {'fields': ('last_login', 'created_at', 'updated_at')}),
+    )
+    
+    readonly_fields = ['created_at', 'updated_at', 'last_login']
+    
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('email', 'first_name', 'last_name', 'phone', 'role', 'password1', 'password2'),
+        }),
+    )
+
+
+@admin.register(UserProfile)
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = ['user', 'city', 'state', 'country']
+    search_fields = ['user__email', 'city', 'state']
+    list_filter = ['city', 'state', 'country']
+
+
+@admin.register(ServiceProviderProfile)
+class ServiceProviderProfileAdmin(admin.ModelAdmin):
+    list_display = ['user', 'business_name', 'verification_status', 'average_rating', 'total_bookings', 'is_available']
+    list_filter = ['verification_status', 'is_available', 'created_at']
+    search_fields = ['user__email', 'business_name']
+    readonly_fields = ['average_rating', 'total_reviews', 'total_bookings', 'completed_bookings']
+    
+    fieldsets = (
+        ('Business Information', {
+            'fields': ('user', 'business_name', 'business_description', 'years_of_experience')
+        }),
+        ('Verification', {
+            'fields': ('verification_status', 'verified_at', 'verified_by', 'id_proof', 'business_license', 'certificate')
+        }),
+        ('Statistics', {
+            'fields': ('average_rating', 'total_reviews', 'total_bookings', 'completed_bookings')
+        }),
+        ('Availability', {
+            'fields': ('is_available', 'max_concurrent_bookings')
+        }),
+    )
+
+
+@admin.register(OTPVerification)
+class OTPVerificationAdmin(admin.ModelAdmin):
+    list_display = ['user', 'otp_type', 'otp_code', 'is_used', 'expires_at', 'created_at']
+    list_filter = ['otp_type', 'is_used', 'created_at']
+    search_fields = ['user__email', 'otp_code']
+    readonly_fields = ['created_at']

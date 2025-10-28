@@ -1,0 +1,847 @@
+{
+  "info": {
+    "name": "Service Marketplace API",
+    "description": "Complete API collection for Service Marketplace Platform",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "12345"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{access_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "refresh_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "user_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "booking_reference",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "service_slug",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register Customer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('access_token', jsonData.tokens.access);",
+                  "    pm.environment.set('refresh_token', jsonData.tokens.refresh);",
+                  "    pm.environment.set('user_id', jsonData.user.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"customer@example.com\",\n  \"phone\": \"+1234567890\",\n  \"first_name\": \"John\",\n  \"last_name\": \"Doe\",\n  \"password\": \"SecurePass123!\",\n  \"password_confirm\": \"SecurePass123!\",\n  \"role\": \"CUSTOMER\",\n  \"profile\": {\n    \"city\": \"New York\",\n    \"state\": \"NY\",\n    \"country\": \"USA\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/users/register/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "register", ""]
+            }
+          }
+        },
+        {
+          "name": "Register Service Provider",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('provider_token', jsonData.tokens.access);",
+                  "    pm.environment.set('provider_id', jsonData.user.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"provider@example.com\",\n  \"phone\": \"+1234567891\",\n  \"first_name\": \"Jane\",\n  \"last_name\": \"Smith\",\n  \"password\": \"SecurePass123!\",\n  \"password_confirm\": \"SecurePass123!\",\n  \"role\": \"SERVICE_PROVIDER\",\n  \"profile\": {\n    \"city\": \"New York\",\n    \"state\": \"NY\",\n    \"country\": \"USA\"\n  },\n  \"provider_profile\": {\n    \"business_name\": \"Jane's Professional Services\",\n    \"business_description\": \"Expert service provider with 10 years experience\",\n    \"years_of_experience\": 10\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/users/register/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "register", ""]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('access_token', jsonData.tokens.access);",
+                  "    pm.environment.set('refresh_token', jsonData.tokens.refresh);",
+                  "    pm.environment.set('user_id', jsonData.user.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"customer@example.com\",\n  \"password\": \"SecurePass123!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/users/login/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "login", ""]
+            }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('access_token', jsonData.access);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh\": \"{{refresh_token}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/users/token/refresh/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "token", "refresh", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "User Profile",
+      "item": [
+        {
+          "name": "Get My Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/users/profile/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "profile", ""]
+            }
+          }
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"first_name\": \"John\",\n  \"last_name\": \"Doe Updated\",\n  \"phone\": \"+1234567890\",\n  \"profile\": {\n    \"bio\": \"Professional customer\",\n    \"city\": \"Los Angeles\",\n    \"state\": \"CA\",\n    \"address_line1\": \"123 Main St\",\n    \"postal_code\": \"90001\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/users/profile/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "profile", ""]
+            }
+          }
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"old_password\": \"SecurePass123!\",\n  \"new_password\": \"NewSecurePass123!\",\n  \"new_password_confirm\": \"NewSecurePass123!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/users/password/change/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "password", "change", ""]
+            }
+          }
+        },
+        {
+          "name": "Request Password Reset",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"customer@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/users/password/reset/request/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "password", "reset", "request", ""]
+            }
+          }
+        },
+        {
+          "name": "List Service Providers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/users/providers/?verified=true&city=New York",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "providers", ""],
+              "query": [
+                {
+                  "key": "verified",
+                  "value": "true"
+                },
+                {
+                  "key": "city",
+                  "value": "New York"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Service Categories",
+      "item": [
+        {
+          "name": "List Categories",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/services/categories/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "services", "categories", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Services",
+      "item": [
+        {
+          "name": "List Services",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/services/?page=1&page_size=20&verified_only=true",
+              "host": ["{{base_url}}"],
+              "path": ["api", "services", ""],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "page_size",
+                  "value": "20"
+                },
+                {
+                  "key": "verified_only",
+                  "value": "true"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Search Services",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/services/?search=plumbing&city=New York&min_price=50&max_price=200&min_rating=4",
+              "host": ["{{base_url}}"],
+              "path": ["api", "services", ""],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "plumbing"
+                },
+                {
+                  "key": "city",
+                  "value": "New York"
+                },
+                {
+                  "key": "min_price",
+                  "value": "50"
+                },
+                {
+                  "key": "max_price",
+                  "value": "200"
+                },
+                {
+                  "key": "min_rating",
+                  "value": "4"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Service Details",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/services/{{service_slug}}/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "services", "{{service_slug}}", ""]
+            }
+          }
+        },
+        {
+          "name": "Create Service (Provider)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('service_slug', jsonData.slug);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Expert Plumbing Services\",\n  \"slug\": \"expert-plumbing-services\",\n  \"description\": \"Professional plumbing services for residential and commercial properties. Available 24/7 for emergencies.\",\n  \"short_description\": \"Fast and reliable plumbing services\",\n  \"category\": 1,\n  \"pricing_type\": \"HOURLY\",\n  \"base_price\": \"75.00\",\n  \"currency\": \"USD\",\n  \"duration_minutes\": 120,\n  \"meta_title\": \"Expert Plumbing in NYC\",\n  \"meta_description\": \"Professional plumbing services in New York City\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/services/create/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "services", "create", ""]
+            }
+          }
+        },
+        {
+          "name": "Update Service",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Expert Plumbing Services - Updated\",\n  \"description\": \"Updated description\",\n  \"base_price\": \"85.00\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/services/{{service_slug}}/update/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "services", "{{service_slug}}", "update", ""]
+            }
+          }
+        },
+        {
+          "name": "My Services (Provider)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/services/my-services/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "services", "my-services", ""]
+            }
+          }
+        },
+        {
+          "name": "Featured Services",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/services/featured/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "services", "featured", ""]
+            }
+          }
+        },
+        {
+          "name": "Popular Services",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/services/popular/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "services", "popular", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Bookings",
+      "item": [
+        {
+          "name": "Create Booking",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.environment.set('booking_reference', jsonData.booking_reference);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"service\": 1,\n  \"scheduled_date\": \"2025-11-15\",\n  \"scheduled_time\": \"10:00:00\",\n  \"estimated_duration_minutes\": 120,\n  \"service_address\": \"123 Main Street, Apt 4B\",\n  \"service_city\": \"New York\",\n  \"service_state\": \"NY\",\n  \"service_postal_code\": \"10001\",\n  \"latitude\": 40.7128,\n  \"longitude\": -74.0060,\n  \"customer_notes\": \"Please ring the doorbell twice. The lock is a bit tricky.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/bookings/create/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "bookings", "create", ""]
+            }
+          }
+        },
+        {
+          "name": "List Bookings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/bookings/?status=PENDING",
+              "host": ["{{base_url}}"],
+              "path": ["api", "bookings", ""],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "PENDING"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Booking Details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/bookings/{{booking_reference}}/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "bookings", "{{booking_reference}}", ""]
+            }
+          }
+        },
+        {
+          "name": "Update Booking Status - Confirm",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"CONFIRMED\",\n  \"notes\": \"Booking confirmed. Will arrive on time.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/bookings/{{booking_reference}}/status/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "bookings", "{{booking_reference}}", "status", ""]
+            }
+          }
+        },
+        {
+          "name": "Update Booking Status - In Progress",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"IN_PROGRESS\",\n  \"notes\": \"Work started\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/bookings/{{booking_reference}}/status/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "bookings", "{{booking_reference}}", "status", ""]
+            }
+          }
+        },
+        {
+          "name": "Update Booking Status - Completed",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"COMPLETED\",\n  \"notes\": \"Work completed successfully\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/bookings/{{booking_reference}}/status/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "bookings", "{{booking_reference}}", "status", ""]
+            }
+          }
+        },
+        {
+          "name": "Cancel Booking",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cancellation_reason\": \"Schedule conflict, need to reschedule\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/bookings/{{booking_reference}}/cancel/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "bookings", "{{booking_reference}}", "cancel", ""]
+            }
+          }
+        },
+        {
+          "name": "Get Booking History",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/bookings/{{booking_reference}}/history/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "bookings", "{{booking_reference}}", "history", ""]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reviews",
+      "item": [
+        {
+          "name": "Create Review",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"booking\": 1,\n  \"rating\": 5,\n  \"title\": \"Excellent Service!\",\n  \"comment\": \"Very professional and completed the job perfectly. Highly recommend! The plumber arrived on time and fixed the issue quickly.\",\n  \"quality_rating\": 5,\n  \"punctuality_rating\": 5,\n  \"professionalism_rating\": 5,\n  \"value_rating\": 5\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/reviews/create/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "reviews", "create", ""]
+            }
+          }
+        },
+        {
+          "name": "List Reviews",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/reviews/?order=-created_at",
+              "host": ["{{base_url}}"],
+              "path": ["api", "reviews", ""],
+              "query": [
+                {
+                  "key": "order",
+                  "value": "-created_at"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Review Details",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/reviews/1/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "reviews", "1", ""]
+            }
+          }
+        },
+        {
+          "name": "Provider Reviews",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/reviews/provider/1/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "reviews", "provider", "1", ""]
+            }
+          }
+        },
+        {
+          "name": "Service Reviews",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/reviews/service/1/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "reviews", "service", "1", ""]
+            }
+          }
+        },
+        {
+          "name": "My Reviews",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/reviews/my-reviews/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "reviews", "my-reviews", ""]
+            }
+          }
+        },
+        {
+          "name": "Respond to Review (Provider)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"response_text\": \"Thank you so much for the kind words! It was a pleasure working with you. Looking forward to serving you again in the future.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/reviews/1/respond/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "reviews", "1", "respond", ""]
+            }
+          }
+        },
+        {
+          "name": "Mark Review as Helpful",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"helpful\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/reviews/1/helpful/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "reviews", "1", "helpful", ""]
+            }
+          }
+        },
+        {
+          "name": "Review Statistics",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/reviews/stats/?provider=1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "reviews", "stats", ""],
+              "query": [
+                {
+                  "key": "provider",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
