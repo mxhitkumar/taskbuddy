@@ -1,0 +1,676 @@
+# 🎬 Postman API Testing - Complete Walkthrough
+
+## 🎯 Goal
+Test the entire Service Marketplace platform from registration to review in 10 minutes.
+
+---
+
+## ⚡ Prerequisites (2 minutes)
+
+### 1. Start the Backend Server
+
+**Option A: Docker**
+```bash
+docker-compose up -d
+docker-compose exec web python manage.py migrate
+```
+
+**Option B: Local**
+```bash
+source venv/bin/activate
+python manage.py runserver
+```
+
+### 2. Create Initial Data
+
+Open Django Admin: http://localhost:8000/admin/
+
+Login with superuser, then create:
+```
+Service Category:
+- Name: Plumbing
+- Slug: plumbing
+- Is Active: ✓
+- Save
+```
+
+### 3. Import Postman Collection
+
+1. Open Postman
+2. Click **Import** → **Raw text**
+3. Paste the collection JSON
+4. Click **Import**
+
+### 4. Set Environment
+
+1. Create new environment: "Marketplace Local"
+2. Add variable: `base_url` = `http://localhost:8000`
+3. Save and select environment
+
+✅ **Ready to test!**
+
+---
+
+## 🎬 Act 1: User Registration (2 minutes)
+
+### Scene 1: Register Customer
+
+```
+📍 Authentication → Register Customer
+```
+
+**What to do:**
+1. Open request
+2. Review body (already filled)
+3. Click **Send**
+
+**Expected:**
+- Status: `201 Created`
+- Response has `user` and `tokens`
+- Environment now has `access_token` ✅
+
+**What just happened:**
+- Customer account created
+- JWT tokens generated
+- Tokens auto-saved to environment
+
+---
+
+### Scene 2: Register Service Provider
+
+```
+📍 Authentication → Register Service Provider
+```
+
+**What to do:**
+1. Open request
+2. Click **Send**
+
+**Expected:**
+- Status: `201 Created`
+- Provider account created with business profile
+
+**Pro Tip:** 💡
+Now you have 2 accounts:
+- `customer@example.com` - for booking services
+- `provider@example.com` - for offering services
+
+---
+
+## 🎬 Act 2: Provider Creates Service (2 minutes)
+
+### Scene 1: Login as Provider
+
+```
+📍 Authentication → Login
+```
+
+**What to do:**
+1. Open request
+2. Change email to: `provider@example.com`
+3. Password is already: `SecurePass123!`
+4. Click **Send**
+
+**Expected:**
+- Status: `200 OK`
+- New `access_token` saved
+- You're now logged in as provider
+
+---
+
+### Scene 2: Create a Service
+
+```
+📍 Services → Create Service (Provider)
+```
+
+**What to do:**
+1. Open request
+2. **IMPORTANT:** Update `category` to `1` (the one we created)
+3. Click **Send**
+
+**Expected:**
+- Status: `201 Created`
+- Service created successfully
+- `service_slug` auto-saved
+
+**What you created:**
+- Title: Expert Plumbing Services
+- Price: $75/hour
+- Duration: 2 hours
+
+---
+
+### Scene 3: View My Services
+
+```
+📍 Services → My Services (Provider)
+```
+
+**What to do:**
+1. Click **Send**
+
+**Expected:**
+- Status: `200 OK`
+- List shows your created service
+
+---
+
+## 🎬 Act 3: Customer Books Service (2 minutes)
+
+### Scene 1: Login as Customer
+
+```
+📍 Authentication → Login
+```
+
+**What to do:**
+1. Open request
+2. Change email to: `customer@example.com`
+3. Click **Send**
+
+**Expected:**
+- You're now logged in as customer
+
+---
+
+### Scene 2: Browse Services
+
+```
+📍 Services → List Services
+```
+
+**What to do:**
+1. Click **Send**
+
+**Expected:**
+- Status: `200 OK`
+- See all available services
+- Note the service `id` (you'll need it)
+
+---
+
+### Scene 3: View Service Details
+
+```
+📍 Services → Get Service Details
+```
+
+**What to do:**
+1. The URL already uses `{{service_slug}}`
+2. Click **Send**
+
+**Expected:**
+- Status: `200 OK`
+- Full service details
+- Provider information
+- Pricing details
+
+---
+
+### Scene 4: Create Booking
+
+```
+📍 Bookings → Create Booking
+```
+
+**What to do:**
+1. Open request
+2. Update `service` ID (from Scene 2)
+3. Update date to future: `"scheduled_date": "2025-12-01"`
+4. Click **Send**
+
+**Expected:**
+- Status: `201 Created`
+- Booking created with reference like `BK123ABC456DEF`
+- `booking_reference` auto-saved
+- Status is `PENDING`
+
+**Real-world:** 📧
+- Customer gets confirmation email
+- Provider gets notification
+
+---
+
+## 🎬 Act 4: Provider Manages Booking (1 minute)
+
+### Scene 1: Login as Provider
+
+```
+📍 Authentication → Login
+```
+
+**What to do:**
+1. Switch to `provider@example.com`
+2. Click **Send**
+
+---
+
+### Scene 2: View Bookings
+
+```
+📍 Bookings → List Bookings
+```
+
+**What to do:**
+1. Click **Send**
+
+**Expected:**
+- See the booking you just created
+- Status: `PENDING`
+
+---
+
+### Scene 3: Confirm Booking
+
+```
+📍 Bookings → Update Booking Status - Confirm
+```
+
+**What to do:**
+1. URL uses `{{booking_reference}}` (already saved)
+2. Click **Send**
+
+**Expected:**
+- Status: `200 OK`
+- Booking status changed to `CONFIRMED`
+- `confirmed_at` timestamp added
+
+**Real-world:** 📧
+- Customer gets confirmation notification
+
+---
+
+### Scene 4: Start Work
+
+```
+📍 Bookings → Update Booking Status - In Progress
+```
+
+**What to do:**
+1. Click **Send**
+
+**Expected:**
+- Status: `IN_PROGRESS`
+- `actual_start_time` recorded
+
+---
+
+### Scene 5: Complete Work
+
+```
+📍 Bookings → Update Booking Status - Completed
+```
+
+**What to do:**
+1. Click **Send**
+
+**Expected:**
+- Status: `COMPLETED`
+- `completed_at` and `actual_end_time` recorded
+
+**Real-world:** 📧
+- Customer notified work is done
+- Can now leave review
+
+---
+
+## 🎬 Act 5: Customer Reviews Service (1 minute)
+
+### Scene 1: Login as Customer
+
+```
+📍 Authentication → Login
+```
+
+**What to do:**
+1. Switch to `customer@example.com`
+2. Click **Send**
+
+---
+
+### Scene 2: View Booking Details
+
+```
+📍 Bookings → Get Booking Details
+```
+
+**What to do:**
+1. Click **Send**
+
+**Expected:**
+- See complete booking history
+- Status: `COMPLETED`
+- Can leave review
+
+---
+
+### Scene 3: Leave Review
+
+```
+📍 Reviews → Create Review
+```
+
+**What to do:**
+1. Open request
+2. Update `booking` ID (use actual ID from response)
+3. Click **Send**
+
+**Expected:**
+- Status: `201 Created`
+- Review created with 5-star rating
+- All sub-ratings: 5 stars
+
+**What you reviewed:**
+- Overall: 5 stars ⭐⭐⭐⭐⭐
+- Quality: 5 stars
+- Punctuality: 5 stars
+- Professionalism: 5 stars
+- Value: 5 stars
+
+---
+
+### Scene 4: View All Reviews
+
+```
+📍 Reviews → List Reviews
+```
+
+**What to do:**
+1. Click **Send**
+
+**Expected:**
+- See your review in the list
+- Shows customer name, rating, comment
+
+---
+
+## 🎬 Act 6: Provider Responds (1 minute)
+
+### Scene 1: Login as Provider
+
+```
+📍 Authentication → Login
+```
+
+**What to do:**
+1. Switch to `provider@example.com`
+2. Click **Send**
+
+---
+
+### Scene 2: View Provider Reviews
+
+```
+📍 Reviews → Provider Reviews
+```
+
+**What to do:**
+1. Update URL: `/api/reviews/provider/{{provider_id}}/`
+2. Or just use `/api/reviews/provider/2/` (assuming provider is ID 2)
+3. Click **Send**
+
+**Expected:**
+- See all reviews for this provider
+
+---
+
+### Scene 3: Respond to Review
+
+```
+📍 Reviews → Respond to Review (Provider)
+```
+
+**What to do:**
+1. Update review ID in URL (use 1 or actual ID)
+2. Click **Send**
+
+**Expected:**
+- Status: `201 Created`
+- Response added to review
+
+**Real-world:** 📧
+- Customer notified of provider response
+
+---
+
+### Scene 4: View Review Statistics
+
+```
+📍 Reviews → Review Statistics
+```
+
+**What to do:**
+1. Add query param: `?provider=2` (or actual provider ID)
+2. Click **Send**
+
+**Expected:**
+```json
+{
+  "total_reviews": 1,
+  "average_rating": 5.00,
+  "average_quality": 5.00,
+  "average_punctuality": 5.00,
+  "average_professionalism": 5.00,
+  "average_value": 5.00,
+  "rating_distribution": {
+    "5_star": 1,
+    "4_star": 0,
+    "3_star": 0,
+    "2_star": 0,
+    "1_star": 0
+  }
+}
+```
+
+---
+
+## 🎉 Congratulations! You've Completed the Full Journey!
+
+### What You Tested:
+✅ User Registration (Customer & Provider)
+✅ Authentication (Login with JWT)
+✅ Service Creation (Provider)
+✅ Service Browsing (Customer)
+✅ Booking Creation (Customer)
+✅ Booking Management (Provider)
+✅ Status Updates (Pending → Confirmed → In Progress → Completed)
+✅ Review System (Customer rates provider)
+✅ Review Response (Provider responds)
+✅ Statistics (View aggregated ratings)
+
+---
+
+## 🔥 Bonus Scenes
+
+### Test Cancellation Flow
+
+```
+📍 Bookings → Cancel Booking
+```
+
+**When to use:**
+- Before status is COMPLETED
+- Customer or Provider can cancel
+- Requires cancellation reason
+
+---
+
+### Test Search & Filters
+
+```
+📍 Services → Search Services
+```
+
+**Try these filters:**
+```
+?search=plumbing
+?city=New York
+?min_price=50&max_price=200
+?min_rating=4
+?pricing_type=HOURLY
+```
+
+---
+
+### Test Update Profile
+
+```
+📍 User Profile → Update Profile
+```
+
+**What to update:**
+- Name
+- Address
+- Bio
+- City/State
+
+---
+
+### Test Password Change
+
+```
+📍 User Profile → Change Password
+```
+
+**Steps:**
+1. Provide old password
+2. Provide new password
+3. Confirm new password
+
+---
+
+## 🐛 Common Issues & Quick Fixes
+
+### Issue: "service": ["Invalid pk"]
+
+**Fix:**
+```
+Update service ID in booking request body
+Use actual ID from "List Services" response
+```
+
+### Issue: "booking": ["Invalid pk"]
+
+**Fix:**
+```
+Update booking ID in review request body
+Use actual ID from "List Bookings" response
+```
+
+### Issue: 401 Unauthorized
+
+**Fix:**
+```
+1. Check environment is selected (top right)
+2. Re-login to refresh token
+3. Check access_token is set in environment
+```
+
+### Issue: Can't create booking
+
+**Fix:**
+```
+1. Make sure logged in as CUSTOMER
+2. Check service exists
+3. Date must be in future
+4. Service must be active
+```
+
+### Issue: Can't leave review
+
+**Fix:**
+```
+1. Booking must be COMPLETED
+2. Can only review once per booking
+3. Must be logged in as customer who made booking
+```
+
+---
+
+## 📊 Quick Reference: Who Can Do What
+
+| Action | Customer | Provider | Admin |
+|--------|----------|----------|-------|
+| Browse Services | ✅ | ✅ | ✅ |
+| Create Service | ❌ | ✅ | ✅ |
+| Create Booking | ✅ | ❌ | ✅ |
+| Confirm Booking | ❌ | ✅ | ✅ |
+| Leave Review | ✅ | ❌ | ✅ |
+| Respond to Review | ❌ | ✅ | ✅ |
+
+---
+
+## 🎓 Pro Tips
+
+### 1. Use Collection Runner
+Run entire flow automatically:
+1. Click collection name
+2. Click "Run"
+3. Select all requests
+4. Click "Run Service Marketplace API"
+
+### 2. Save Example Responses
+Right-click response → Save as Example
+Great for documentation
+
+### 3. Use Console for Debugging
+View → Show Postman Console
+See all requests/responses
+
+### 4. Share Collection
+Export → Share with team
+Everyone gets same setup
+
+---
+
+## 🚀 Next Steps
+
+### Test Edge Cases:
+- [ ] Cancel booking at different stages
+- [ ] Try booking past date (should fail)
+- [ ] Try duplicate review (should fail)
+- [ ] Test with invalid data
+- [ ] Test pagination (create 25+ services)
+- [ ] Test search with no results
+
+### Advanced Testing:
+- [ ] Load testing with Newman
+- [ ] Automated CI/CD testing
+- [ ] Monitor API performance
+- [ ] Test rate limiting
+
+---
+
+## 📚 Resources
+
+- **API Docs**: http://localhost:8000/api/docs/
+- **Admin Panel**: http://localhost:8000/admin/
+- **Full API Docs**: See `API_DOCUMENTATION.md`
+- **Setup Guide**: See `POSTMAN_SETUP_GUIDE.md`
+
+---
+
+## ✅ Testing Checklist
+
+Mark as you complete:
+
+- [ ] Imported collection
+- [ ] Set up environment
+- [ ] Server running
+- [ ] Created service category
+- [ ] Registered customer
+- [ ] Registered provider
+- [ ] Created service
+- [ ] Created booking
+- [ ] Confirmed booking
+- [ ] Completed booking
+- [ ] Left review
+- [ ] Provider responded
+- [ ] Viewed statistics
+
+---
+
+**🎊 You're now a Service Marketplace API expert!**
+
+**Happy Testing! 🚀**
