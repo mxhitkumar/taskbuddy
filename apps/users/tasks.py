@@ -11,89 +11,99 @@ def clean_expired_otps():
     """
     Clean up expired OTP verification codes
     """
-    from apps.users.models import OTPVerification
+    from apps.users.models import EmailOTP
     
+    # Mark as expired
     expired_time = timezone.now()
-    deleted_count = OTPVerification.objects.filter(
+    updated_count = EmailOTP.objects.filter(
         expires_at__lt=expired_time,
-        is_used=False
+        is_used=False,
+        is_expired=False
+    ).update(is_expired=True)
+    
+    # Delete old OTPs (older than 30 days)
+    delete_time = timezone.now() - timedelta(days=30)
+    deleted_count = EmailOTP.objects.filter(
+        created_at__lt=delete_time
     ).delete()[0]
     
-    return f"Deleted {deleted_count} expired OTPs"
+    return f"Marked {updated_count} OTPs as expired, Deleted {deleted_count} old OTPs"
 
 
 @shared_task
-def send_welcome_email(user_id):
+def send_welcome_email_async(user_id):
     """
     Send welcome email to new users
     """
     from apps.users.models import User
-    from django.core.mail import send_mail
-    from django.conf import settings
+    from core.email_utils import EmailService
     
     try:
         user = User.objects.get(id=user_id)
-        
-        subject = 'Welcome to Service Marketplace!'
-        message = f"""
-        Hi {user.first_name},
-        
-        Welcome to our Service Marketplace platform!
-        
-        Your account has been created successfully.
-        Role: {user.get_role_display()}
-        
-        Please verify your email address to get started.
-        
-        Best regards,
-        Service Marketplace Team
-        """
-        
-        send_mail(
-            subject,
-            message,
-            settings.EMAIL_HOST_USER,
-            [user.email],
-            fail_silently=True,
-        )
-        
+        EmailService.send_welcome_email(user)
+        return f"Welcome email sent to {user.email}"
     except User.DoesNotExist:
-        pass
+        return "User not found"
 
 
 @shared_task
-def send_verification_email(user_id, otp_code):
+def send_verification_email_async(user_id, otp_code):
     """
     Send email verification OTP
     """
     from apps.users.models import User
-    from django.core.mail import send_mail
-    from django.conf import settings
+    from core.email_utils import EmailService
     
     try:
         user = User.objects.get(id=user_id)
-        
-        subject = 'Email Verification - Service Marketplace'
-        message = f"""
-        Hi {user.first_name},
-        
-        Your email verification code is: {otp_code}
-        
-        This code will expire in 10 minutes.
-        
-        If you didn't request this, please ignore this email.
-        
-        Best regards,
-        Service Marketplace Team
-        """
-        
-        send_mail(
-            subject,
-            message,
-            settings.EMAIL_HOST_USER,
-            [user.email],
-            fail_silently=True,
-        )
-        
+        EmailService.send_otp_email(user, otp_code, 'EMAIL_VERIFICATION')
+        return f"Verification email sent to {user.email}"
     except User.DoesNotExist:
-        pass
+        return "User not found"
+
+
+@shared_task
+def send_password_reset_email_async(user_id, otp_code):
+    """
+    Send password reset OTP
+    """
+    from apps.users.models import User
+    from core.email_utils import EmailService
+    
+    try:
+        user = User.objects.get(id=user_id)
+        EmailService.send_otp_email(user, otp_code, 'PASSWORD_RESET')
+        return f"Password reset email sent to {user.email}"
+    except User.DoesNotExist:
+        return "User not found"
+
+
+@shared_task
+def check_unverified_users():
+    """
+    Send reminder emails to unverified users after 24 hours
+    """
+    from apps.users.models import User
+    from core.email_utils import EmailService
+    
+    # Find users who registered more than 24 hours ago but haven't verified
+    cutoff_time = timezone.now() - timedelta(hours=24)
+    unverified_users = User.objects.filter(
+        is_email_verified=False,
+        is_active=True,
+        created_at__lte=cutoff_time,
+        created_at__gte=timezone.now() - timedelta(days=7)  # Within last 7 days
+    )
+    
+    count = 0
+    for user in unverified_users:
+        # Check if reminder already sent
+        cache_key = f'verification_reminder_{user.id}'
+        from django.core.cache import cache
+        
+        if not cache.get(cache_key):
+            EmailService.send_otp_email(user, None, 'EMAIL_VERIFICATION')
+            cache.set(cache_key, True, 86400 * 7)  # Don't remind again for 7 days
+            count += 1
+    
+    return f"Sent {count} verification reminders"

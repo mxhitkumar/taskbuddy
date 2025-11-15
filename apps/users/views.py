@@ -333,7 +333,7 @@ class UserStatsView(views.APIView):
             }
             cache.set(cache_key, stats, 300)  # Cache for 5 minutes
         
-        return Response(stats).validated_data['email']
+        return Response(stats)validated_data['email']
         
         try:
             user = User.objects.get(email=email)
@@ -373,30 +373,4 @@ class PasswordResetConfirmView(views.APIView):
         serializer = PasswordResetConfirmSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         
-        email = serializer.validated_data['email']
-        otp_code = serializer.validated_data['otp_code']
-        try:
-            user = User.objects.get(email=email)
-            otp = OTPVerification.objects.get(
-                user=user,
-                otp_code=otp_code,
-                otp_type=OTPVerification.OTPType.PASSWORD_RESET,
-                is_used=False,
-                expires_at__gte=timezone.now()
-            )
-            
-            # Reset password
-            user.set_password(serializer.validated_data['new_password'])
-            user.save()
-            
-            # Mark OTP as used
-            otp.is_used = True
-            otp.save()
-            
-            return Response({
-                'message': 'Password reset successful'
-            })
-        except (User.DoesNotExist, OTPVerification.DoesNotExist):
-            return Response({
-                'error': 'Invalid or expired OTP'
-            }, status=status.HTTP_400_BAD_REQUEST) 
+        email = serializer.

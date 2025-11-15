@@ -3,24 +3,25 @@ Django Admin configuration for User models
 """
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from apps.users.models import User, UserProfile, ServiceProviderProfile, OTPVerification
+from django.utils.html import format_html
+from apps.users.models import User, UserProfile, ServiceProviderProfile, EmailOTP
 
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
-    list_display = ['email', 'full_name', 'role', 'is_active', 'is_verified', 'created_at']
-    list_filter = ['role', 'is_active', 'is_verified', 'created_at']
+    list_display = ['email', 'full_name', 'role', 'is_active', 'is_email_verified', 'created_at']
+    list_filter = ['role', 'is_active', 'is_email_verified', 'created_at']
     search_fields = ['email', 'first_name', 'last_name', 'phone']
     ordering = ['-created_at']
     
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
         ('Personal Info', {'fields': ('first_name', 'last_name', 'phone')}),
-        ('Permissions', {'fields': ('role', 'is_active', 'is_staff', 'is_superuser', 'is_verified')}),
-        ('Important Dates', {'fields': ('last_login', 'created_at', 'updated_at')}),
+        ('Permissions', {'fields': ('role', 'is_active', 'is_staff', 'is_superuser', 'is_email_verified')}),
+        ('Important Dates', {'fields': ('last_login', 'email_verified_at', 'created_at', 'updated_at')}),
     )
     
-    readonly_fields = ['created_at', 'updated_at', 'last_login']
+    readonly_fields = ['created_at', 'updated_at', 'last_login', 'email_verified_at']
     
     add_fieldsets = (
         (None, {
@@ -60,35 +61,69 @@ class ServiceProviderProfileAdmin(admin.ModelAdmin):
     )
 
 
-@admin.register(OTPVerification)
-class OTPVerificationAdmin(admin.ModelAdmin):
-    list_display = ['user', 'otp_type', 'otp_code', 'is_used', 'expires_at', 'created_at']
-    list_filter = ['otp_type', 'is_used', 'created_at']
-    search_fields = ['user__email', 'otp_code']
-    readonly_fields = ['created_at']Commit at 2025-01-13T15:40:45
-Commit at 2025-01-13T16:02:21
-Commit at 2025-01-15T12:34:10
-Commit at 2025-01-16T14:31:02
-Commit at 2025-01-20T14:02:17
-Commit at 2025-01-31T16:00:23
-Commit at 2025-02-12T12:16:16
-Commit at 2025-02-18T10:50:04
-Commit at 2025-02-20T14:50:42
-Commit at 2025-02-21T09:38:56
-Commit at 2025-02-26T10:55:17
-Commit at 2025-02-26T12:55:24
-Commit at 2025-03-03T09:16:48
-Commit at 2025-03-10T13:31:36
-Commit at 2025-03-11T14:00:02
-Commit at 2025-03-12T14:57:05
-Commit at 2025-03-13T15:41:51
-Commit at 2025-03-19T16:30:36
-Commit at 2025-03-20T09:27:48
-Commit at 2025-03-20T14:12:06
-Commit at 2025-03-26T11:31:39
-Commit at 2025-03-27T14:50:12
-Commit at 2025-04-02T13:34:21
-Commit at 2025-04-03T10:05:45
-Commit at 2025-04-07T11:18:42
-Commit at 2025-04-09T14:38:08
-Commit at 2025-04-15T11:51:22
+@admin.register(EmailOTP)
+class EmailOTPAdmin(admin.ModelAdmin):
+    list_display = ['email', 'purpose', 'otp_code_display', 'is_used', 'is_expired', 'attempts', 'expires_at', 'created_at']
+    list_filter = ['purpose', 'is_used', 'is_expired', 'created_at']
+    search_fields = ['user__email', 'email', 'otp_code', 'ip_address']
+    readonly_fields = ['created_at', 'verified_at', 'ip_address', 'user_agent']
+    ordering = ['-created_at']
+    
+    fieldsets = (
+        ('OTP Information', {
+            'fields': ('user', 'email', 'otp_code', 'purpose')
+        }),
+        ('Status', {
+            'fields': ('is_used', 'is_expired', 'attempts', 'max_attempts')
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'expires_at', 'verified_at')
+        }),
+        ('Tracking', {
+            'fields': ('ip_address', 'user_agent'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def otp_code_display(self, obj):
+        """Display OTP code with status color"""
+        if obj.is_used:
+            color = 'green'
+            status = '✓ Used'
+        elif obj.is_expired:
+            color = 'red'
+            status = '✗ Expired'
+        elif obj.expires_at < timezone.now():
+            color = 'orange'
+            status = '⏰ Expired (auto)'
+        else:
+            color = 'blue'
+            status = '◷ Active'
+        
+        return format_html(
+            '<span style="color: {}; font-weight: bold;">{}</span> <small>({})</small>',
+            color, obj.otp_code, status
+        )
+    otp_code_display.short_description = 'OTP Code'
+    
+    actions = ['mark_as_expired', 'delete_old_otps']
+    
+    def mark_as_expired(self, request, queryset):
+        """Mark selected OTPs as expired"""
+        count = queryset.update(is_expired=True)
+        self.message_user(request, f'{count} OTP(s) marked as expired.')
+    mark_as_expired.short_description = "Mark selected as expired"
+    
+    def delete_old_otps(self, request, queryset):
+        """Delete OTPs older than 30 days"""
+        from django.utils import timezone
+        from datetime import timedelta
+        
+        cutoff = timezone.now() - timedelta(days=30)
+        count = queryset.filter(created_at__lt=cutoff).delete()[0]
+        self.message_user(request, f'{count} old OTP(s) deleted.')
+    delete_old_otps.short_description = "Delete OTPs older than 30 days"
+
+
+# Import timezone for the admin display
+from django.utils import timezone

@@ -34,12 +34,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-    is_verified = models.BooleanField(default=False)  # Email/Phone verification
+    is_email_verified = models.BooleanField(default=False, db_index=True)  # Email verification only
     
     # Timestamps
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
     last_login = models.DateTimeField(null=True, blank=True)
+    email_verified_at = models.DateTimeField(null=True, blank=True)
     
     objects = UserManager()
     
@@ -53,6 +54,7 @@ class User(AbstractBaseUser, PermissionsMixin):
             models.Index(fields=['email', 'is_active']),
             models.Index(fields=['role', 'is_active']),
             models.Index(fields=['phone']),
+            models.Index(fields=['is_email_verified']),
         ]
     
     def __str__(self):
@@ -201,46 +203,75 @@ class ServiceProviderProfile(models.Model):
         self.save(update_fields=['average_rating', 'total_reviews', 'updated_at'])
 
 
-class OTPVerification(models.Model):
+class EmailOTP(models.Model):
     """
-    OTP for email/phone verification
+    Email OTP for verification and password reset
+    Improved with better security and tracking
     """
     
-    class OTPType(models.TextChoices):
-        EMAIL = 'EMAIL', _('Email Verification')
-        PHONE = 'PHONE', _('Phone Verification')
+    class OTPPurpose(models.TextChoices):
+        EMAIL_VERIFICATION = 'EMAIL_VERIFICATION', _('Email Verification')
         PASSWORD_RESET = 'PASSWORD_RESET', _('Password Reset')
+        LOGIN_2FA = 'LOGIN_2FA', _('Two-Factor Authentication')
     
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='otps')
-    otp_type = models.CharField(max_length=20, choices=OTPType.choices)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='email_otps')
+    email = models.EmailField()  # Store email for reference
     otp_code = models.CharField(max_length=6)
+    purpose = models.CharField(max_length=20, choices=OTPPurpose.choices)
+    
+    # Security
     is_used = models.BooleanField(default=False)
-    expires_at = models.DateTimeField(db_index=True)
+    is_expired = models.BooleanField(default=False)
+    attempts = models.PositiveIntegerField(default=0)  # Track verification attempts
+    max_attempts = models.PositiveIntegerField(default=5)
+    
+    # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField(db_index=True)
+    verified_at = models.DateTimeField(null=True, blank=True)
+    
+    # Tracking
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    user_agent = models.TextField(blank=True)
     
     class Meta:
-        db_table = 'otp_verifications'
+        db_table = 'email_otps'
         ordering = ['-created_at']
         indexes = [
-            models.Index(fields=['user', 'otp_type', 'is_used']),
-            models.Index(fields=['expires_at']),
+            models.Index(fields=['user', 'purpose', 'is_used']),
+            models.Index(fields=['email', 'otp_code']),
+            models.Index(fields=['expires_at', 'is_used']),
         ]
     
     def __str__(self):
-        return f"OTP for {self.user.email} - {self.otp_type}"Commit at 2025-01-11T10:20:36
-Commit at 2025-01-20T16:26:20
-Commit at 2025-02-03T10:08:54
-Commit at 2025-02-20T13:01:40
-Commit at 2025-02-24T12:58:05
-Commit at 2025-02-25T10:44:19
-Commit at 2025-02-25T11:55:32
-Commit at 2025-03-03T11:51:51
-Commit at 2025-03-04T11:09:27
-Commit at 2025-03-05T13:18:43
-Commit at 2025-03-06T12:45:50
-Commit at 2025-03-14T13:21:39
-Commit at 2025-03-18T10:58:36
-Commit at 2025-03-18T14:36:31
-Commit at 2025-03-26T15:23:38
-Commit at 2025-03-27T16:14:44
-Commit at 2025-04-04T14:39:39
+        return f"OTP for {self.email} - {self.purpose}"
+    
+    def is_valid(self):
+        """Check if OTP is still valid"""
+        from django.utils import timezone
+        return (
+            not self.is_used and 
+            not self.is_expired and 
+            self.expires_at > timezone.now() and
+            self.attempts < self.max_attempts
+        )
+    
+    def verify(self, code):
+        """Verify OTP code"""
+        from django.utils import timezone
+        
+        self.attempts += 1
+        
+        if not self.is_valid():
+            self.is_expired = True
+            self.save()
+            return False
+        
+        if self.otp_code == code:
+            self.is_used = True
+            self.verified_at = timezone.now()
+            self.save()
+            return True
+        
+        self.save()
+        return False

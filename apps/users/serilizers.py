@@ -4,7 +4,7 @@ User Serializers for Authentication and User Management
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
-from apps.users.models import User, UserProfile, ServiceProviderProfile, OTPVerification
+from apps.users.models import User, UserProfile, ServiceProviderProfile
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -51,10 +51,14 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = [
             'id', 'email', 'phone', 'first_name', 'last_name', 'full_name',
-            'role', 'role_display', 'is_active', 'is_verified',
-            'profile', 'provider_profile', 'created_at', 'last_login'
+            'role', 'role_display', 'is_active', 'is_email_verified',
+            'email_verified_at', 'profile', 'provider_profile', 
+            'created_at', 'last_login'
         ]
-        read_only_fields = ['id', 'full_name', 'is_verified', 'created_at', 'last_login']
+        read_only_fields = [
+            'id', 'full_name', 'is_email_verified', 'email_verified_at',
+            'created_at', 'last_login'
+        ]
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
@@ -181,7 +185,7 @@ class PasswordResetRequestSerializer(serializers.Serializer):
 class PasswordResetConfirmSerializer(serializers.Serializer):
     """Serializer for password reset confirmation"""
     email = serializers.EmailField(required=True)
-    otp_code = serializers.CharField(required=True, max_length=6)
+    otp_code = serializers.CharField(required=True, max_length=6, min_length=6)
     new_password = serializers.CharField(
         required=True,
         write_only=True,
@@ -193,6 +197,11 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
         if attrs['new_password'] != attrs['new_password_confirm']:
             raise serializers.ValidationError({"new_password": "Passwords don't match."})
         return attrs
+    
+    def validate_otp_code(self, value):
+        if not value.isdigit():
+            raise serializers.ValidationError("OTP must contain only digits.")
+        return value
 
 
 class UserUpdateSerializer(serializers.ModelSerializer):
@@ -234,8 +243,11 @@ class ProviderVerificationSerializer(serializers.ModelSerializer):
         read_only_fields = ['business_name', 'business_description', 'years_of_experience']
 
 
-class OTPVerificationSerializer(serializers.Serializer):
-    """Serializer for OTP verification"""
-    email = serializers.EmailField(required=True)
-    otp_code = serializers.CharField(required=True, max_length=6)
-    otp_type = serializers.ChoiceField(choices=OTPVerification.OTPType.choices)
+class EmailOTPSerializer(serializers.Serializer):
+    """Serializer for Email OTP verification"""
+    otp_code = serializers.CharField(required=True, max_length=6, min_length=6)
+    
+    def validate_otp_code(self, value):
+        if not value.isdigit():
+            raise serializers.ValidationError("OTP must contain only digits.")
+        return value
