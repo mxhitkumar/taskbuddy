@@ -2,7 +2,7 @@
 Service URLs
 """
 from django.urls import path
-from apps.services import views
+from services import views
 
 app_name = 'services'
 

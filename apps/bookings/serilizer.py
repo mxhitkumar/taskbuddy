@@ -3,9 +3,9 @@ Booking Serializers
 """
 from rest_framework import serializers
 from django.utils import timezone
-from apps.bookings.models import Booking, BookingStatusHistory, BookingAttachment
-from apps.services.serializers import ServiceListSerializer
-from apps.users.serializers import UserSerializer
+from bookings.models import Booking, BookingStatusHistory, BookingAttachment
+from services.serializers import ServiceListSerializer
+from users.serializers import UserSerializer
 
 
 class BookingListSerializer(serializers.ModelSerializer):

@@ -5,7 +5,7 @@ Optimized for high-scale operations with proper indexing
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from apps.users.managers import UserManager
+from users.managers import UserManager
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -187,7 +187,7 @@ class ServiceProviderProfile(models.Model):
         Update denormalized rating statistics
         Called by signals when reviews are added/updated
         """
-        from apps.reviews.models import Review
+        from reviews.models import Review
         from django.db.models import Avg, Count
         
         stats = Review.objects.filter(

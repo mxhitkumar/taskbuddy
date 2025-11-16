@@ -4,7 +4,7 @@ User Serializers for Authentication and User Management
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
-from apps.users.models import User, UserProfile, ServiceProviderProfile
+from users.models import User, UserProfile, ServiceProviderProfile
 
 
 class UserProfileSerializer(serializers.ModelSerializer):

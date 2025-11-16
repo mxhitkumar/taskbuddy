@@ -5,7 +5,7 @@ Usage: python manage.py clean_otps
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from datetime import timedelta
-from apps.users.models import EmailOTP
+from users.models import EmailOTP
 
 
 class Command(BaseCommand):

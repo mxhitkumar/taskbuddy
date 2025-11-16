@@ -4,7 +4,7 @@ Django Admin configuration for User models
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.html import format_html
-from apps.users.models import User, UserProfile, ServiceProviderProfile, EmailOTP
+from users.models import User, UserProfile, ServiceProviderProfile, EmailOTP
 
 
 @admin.register(User)

@@ -2,11 +2,14 @@
 Base settings for Service Marketplace Platform
 """
 import os
+import sys
 from pathlib import Path
 from datetime import timedelta
 from decouple import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
+root = lambda *x: os.path.join(BASE_DIR, *x)
+sys.path.insert(0, root('apps'))
 
 SECRET_KEY = config('SECRET_KEY', default='your-secret-key-change-in-production')
 
@@ -32,13 +35,14 @@ INSTALLED_APPS = [
     'django_celery_beat',
     'django_celery_results',
     
-    # Local apps
-    'apps.users',
-    'apps.services',
-    'apps.bookings',
-    'apps.reviews',
-    'apps.notifications',
-    'apps.payments',
+    #local apps
+    'users',
+    'services',
+    'bookings',
+    'reviews',
+    'notifications',
+    'payments',
+    
 ]
 
 MIDDLEWARE = [
@@ -94,10 +98,18 @@ AUTH_USER_MODEL = 'users.User'
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
-    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator', 'OPTIONS': {'min_length': 8}},
-    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
 ]
 
 PASSWORD_HASHERS = [
@@ -230,6 +242,10 @@ SPECTACULAR_SETTINGS = {
     'COMPONENT_SPLIT_REQUEST': True,
 }
 
+# Create logs directory if it doesn't exist
+LOGS_DIR = BASE_DIR / 'logs'
+LOGS_DIR.mkdir(exist_ok=True)
+
 # Logging Configuration
 LOGGING = {
     'version': 1,
@@ -244,7 +260,7 @@ LOGGING = {
         'file': {
             'level': 'INFO',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': BASE_DIR / 'logs' / 'django.log',
+            'filename': str(LOGS_DIR / 'django.log'),
             'maxBytes': 1024 * 1024 * 15,  # 15MB
             'backupCount': 10,
             'formatter': 'verbose',

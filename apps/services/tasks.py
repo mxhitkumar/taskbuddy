@@ -10,7 +10,7 @@ def increment_service_views(service_id):
     """
     Increment service view count asynchronously
     """
-    from apps.services.models import Service
+    from services.models import Service
     from django.db.models import F
     
     Service.objects.filter(id=service_id).update(
@@ -23,9 +23,9 @@ def update_service_statistics():
     """
     Update denormalized service statistics
     """
-    from apps.services.models import Service, ServiceCategory
-    from apps.reviews.models import Review
-    from apps.bookings.models import Booking
+    from services.models import Service, ServiceCategory
+    from reviews.models import Review
+    from bookings.models import Booking
     
     # Update service ratings and counts
     services = Service.objects.all()

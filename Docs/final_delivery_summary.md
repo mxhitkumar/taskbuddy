@@ -273,7 +273,7 @@ python manage.py otp_stats --days=30 --detailed
 python manage.py clean_otps --days=60
 
 # Run tests
-python manage.py test apps.users.tests.test_email_otp
+python manage.py test users.tests.test_email_otp
 ```
 
 ---
@@ -298,7 +298,7 @@ python manage.py otp_stats
 python manage.py clean_otps
 
 # Run tests
-python manage.py test apps.users.tests.test_email_otp
+python manage.py test users.tests.test_email_otp
 ```
 
 ### **Troubleshooting**

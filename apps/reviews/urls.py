@@ -2,7 +2,7 @@
 Review URLs
 """
 from django.urls import path
-from apps.reviews import views
+from reviews import views
 
 app_name = 'reviews'
 

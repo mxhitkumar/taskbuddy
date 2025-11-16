@@ -16,10 +16,10 @@ urlpatterns = [
     path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     
     # API endpoints
-    path('api/users/', include('apps.users.urls')),
-    path('api/services/', include('apps.services.urls')),
-    path('api/bookings/', include('apps.bookings.urls')),
-    path('api/reviews/', include('apps.reviews.urls')),
+    path('api/users/', include('users.urls')),
+    path('api/services/', include('services.urls')),
+    path('api/bookings/', include('bookings.urls')),
+    path('api/reviews/', include('reviews.urls')),
 ]
 
 # Serve media files in development

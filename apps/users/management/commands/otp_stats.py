@@ -6,7 +6,7 @@ from django.core.management.base import BaseCommand
 from django.utils import timezone
 from django.db.models import Avg, Count, Q
 from datetime import timedelta
-from apps.users.models import EmailOTP, User
+from users.models import EmailOTP, User
 
 
 class Command(BaseCommand):

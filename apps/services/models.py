@@ -5,7 +5,7 @@ Optimized with proper indexing and caching strategies
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import MinValueValidator, MaxValueValidator
-from apps.users.models import User
+from users.models import User
 
 
 class ServiceCategory(models.Model):

@@ -143,8 +143,8 @@ Create `scripts/load_sample_data.py`:
 
 ```python
 from django.contrib.auth import get_user_model
-from apps.services.models import ServiceCategory, Service
-from apps.users.models import ServiceProviderProfile
+from services.models import ServiceCategory, Service
+from users.models import ServiceProviderProfile
 
 User = get_user_model()
 
@@ -499,7 +499,7 @@ python manage.py dbshell
 # Django shell
 python manage.py shell
 
->>> from apps.users.models import User
+>>> from users.models import User
 >>> User.objects.count()
 >>> User.objects.filter(role='SERVICE_PROVIDER').count()
 ```

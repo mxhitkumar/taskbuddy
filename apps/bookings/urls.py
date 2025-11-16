@@ -2,7 +2,7 @@
 Booking URLs
 """
 from django.urls import path
-from apps.bookings import views
+from bookings import views
 
 app_name = 'bookings'
 

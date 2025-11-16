@@ -3,7 +3,7 @@ Booking signals for automatic updates
 """
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from apps.bookings.models import Booking
+from bookings.models import Booking
 
 
 @receiver(post_save, sender=Booking)

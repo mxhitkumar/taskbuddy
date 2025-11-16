@@ -3,7 +3,7 @@ User signals for automatic profile creation and updates
 """
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from apps.users.models import User, UserProfile, ServiceProviderProfile
+from users.models import User, UserProfile, ServiceProviderProfile
 
 
 @receiver(post_save, sender=User)

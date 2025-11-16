@@ -20,17 +20,17 @@ app.autodiscover_tasks()
 app.conf.beat_schedule = {
     # Clean expired OTPs every hour
     'clean-expired-otps': {
-        'task': 'apps.users.tasks.clean_expired_otps',
+        'task': 'users.tasks.clean_expired_otps',
         'schedule': crontab(minute=0),  # Every hour
     },
     # Send booking reminders
     'send-booking-reminders': {
-        'task': 'apps.bookings.tasks.send_booking_reminders',
+        'task': 'bookings.tasks.send_booking_reminders',
         'schedule': crontab(hour=8, minute=0),  # Every day at 8 AM
     },
     # Update service statistics
     'update-service-stats': {
-        'task': 'apps.services.tasks.update_service_statistics',
+        'task': 'services.tasks.update_service_statistics',
         'schedule': crontab(hour=2, minute=0),  # Every day at 2 AM
     },
 }

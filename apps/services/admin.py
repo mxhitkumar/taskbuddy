@@ -2,7 +2,7 @@
 Django Admin configuration for Service models
 """
 from django.contrib import admin
-from apps.services.models import (
+from services.models import (
     ServiceCategory, Service, ServiceImage, 
     ServiceAvailability, ServiceArea
 )

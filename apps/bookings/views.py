@@ -7,14 +7,14 @@ from rest_framework.permissions import IsAuthenticated
 from django.utils import timezone
 from django.db.models import Q
 
-from apps.bookings.models import Booking, BookingStatusHistory, BookingAttachment
-from apps.bookings.serializers import (
+from bookings.models import Booking, BookingStatusHistory, BookingAttachment
+from bookings.serializers import (
     BookingListSerializer, BookingDetailSerializer,
     BookingCreateSerializer, BookingUpdateSerializer,
     BookingStatusUpdateSerializer, BookingAttachmentSerializer,
     BookingStatusHistorySerializer
 )
-from apps.users.permissions import IsCustomer, IsServiceProvider, IsOwnerOrAdmin
+from users.permissions import IsCustomer, IsServiceProvider, IsOwnerOrAdmin
 
 
 class BookingCreateView(generics.CreateAPIView):
@@ -31,7 +31,7 @@ class BookingCreateView(generics.CreateAPIView):
         booking = serializer.save()
         
         # Trigger async task for notification
-        from apps.bookings.tasks import send_booking_notification
+        from bookings.tasks import send_booking_notification
         send_booking_notification.delay(booking.id)
         
         return Response(
@@ -177,7 +177,7 @@ class BookingStatusUpdateView(views.APIView):
         )
         
         # Send notification
-        from apps.bookings.tasks import send_status_update_notification
+        from bookings.tasks import send_status_update_notification
         send_status_update_notification.delay(booking.id, old_status, new_status)
         
         return Response(BookingDetailSerializer(booking).data)

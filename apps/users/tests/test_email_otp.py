@@ -6,7 +6,7 @@ from django.utils import timezone
 from datetime import timedelta
 from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
-from apps.users.models import User, EmailOTP
+from users.models import User, EmailOTP
 from core.email_utils import EmailService
 
 

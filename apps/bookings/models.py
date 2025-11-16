@@ -5,8 +5,8 @@ Handles booking lifecycle with optimized queries
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import MinValueValidator
-from apps.users.models import User
-from apps.services.models import Service
+from users.models import User
+from services.models import Service
 
 
 class Booking(models.Model):
@@ -151,7 +151,7 @@ class Booking(models.Model):
     
     def can_review(self):
         """Check if customer can leave a review"""
-        from apps.reviews.models import Review
+        from reviews.models import Review
         return (
             self.status == self.BookingStatus.COMPLETED and
             not Review.objects.filter(booking=self, customer=self.customer).exists()

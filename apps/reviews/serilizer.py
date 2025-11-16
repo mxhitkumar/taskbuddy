@@ -2,8 +2,8 @@
 Review Serializers
 """
 from rest_framework import serializers
-from apps.reviews.models import Review, ReviewResponse, ReviewImage, ReviewHelpful
-from apps.bookings.models import Booking
+from reviews.models import Review, ReviewResponse, ReviewImage, ReviewHelpful
+from bookings.models import Booking
 
 
 class ReviewImageSerializer(serializers.ModelSerializer):

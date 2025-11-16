@@ -167,7 +167,7 @@ If you want to migrate existing verification status:
 
 ```python
 # In Django shell
-from apps.users.models import User
+from users.models import User
 
 # Mark all previously verified users
 User.objects.filter(is_verified=True).update(

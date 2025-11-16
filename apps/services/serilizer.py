@@ -2,11 +2,11 @@
 Service Serializers
 """
 from rest_framework import serializers
-from apps.services.models import (
+from services.models import (
     ServiceCategory, Service, ServiceImage, 
     ServiceAvailability, ServiceArea
 )
-from apps.users.serializers import UserSerializer
+from users.serializers import UserSerializer
 
 
 class ServiceCategorySerializer(serializers.ModelSerializer):

@@ -2,7 +2,7 @@
 Django Admin configuration for Booking models
 """
 from django.contrib import admin
-from apps.bookings.models import Booking, BookingStatusHistory, BookingAttachment
+from bookings.models import Booking, BookingStatusHistory, BookingAttachment
 
 
 class BookingStatusHistoryInline(admin.TabularInline):

@@ -13,7 +13,7 @@ def send_booking_notification(booking_id):
     """
     Send notification when a new booking is created
     """
-    from apps.bookings.models import Booking
+    from bookings.models import Booking
     
     try:
         booking = Booking.objects.select_related(
@@ -73,7 +73,7 @@ def send_status_update_notification(booking_id, old_status, new_status):
     """
     Send notification when booking status changes
     """
-    from apps.bookings.models import Booking
+    from bookings.models import Booking
     
     try:
         booking = Booking.objects.select_related(
@@ -109,7 +109,7 @@ def send_booking_reminders():
     """
     Send reminders for bookings scheduled tomorrow
     """
-    from apps.bookings.models import Booking
+    from bookings.models import Booking
     
     tomorrow = timezone.now().date() + timedelta(days=1)
     
@@ -164,7 +164,7 @@ def auto_complete_bookings():
     """
     Automatically mark bookings as completed after scheduled time + duration
     """
-    from apps.bookings.models import Booking, BookingStatusHistory
+    from bookings.models import Booking, BookingStatusHistory
     
     # Find bookings that should be completed
     cutoff_time = timezone.now() - timedelta(hours=2)

@@ -9,15 +9,17 @@ from django.utils import timezone
 from django.core.cache import cache
 from datetime import timedelta
 import random
-
-from apps.users.models import User, ServiceProviderProfile, OTPVerification
-from apps.users.serializers import (
+# OTPVerifipacker andcation
+# ServiceProviderProfile
+from users.models import User
+from users.serializers import (
     UserRegistrationSerializer, LoginSerializer, UserSerializer,
     PasswordChangeSerializer, PasswordResetRequestSerializer,
     PasswordResetConfirmSerializer, UserUpdateSerializer,
-    ProviderVerificationSerializer, OTPVerificationSerializer
+    ProviderVerificationSerializer
 )
-from apps.users.permissions import IsSuperAdminOrAdmin, IsServiceProvider
+    # OTPVerificationSerializer
+from users.permissions import IsSuperAdminOrAdmin, IsServiceProvider
 
 
 class UserRegistrationView(generics.CreateAPIView):
@@ -194,45 +196,45 @@ class SendVerificationOTPView(views.APIView):
         })
 
 
-class VerifyOTPView(views.APIView):
-    """
-    Verify OTP
-    POST /api/users/verify/confirm-otp/
-    """
-    permission_classes = [IsAuthenticated]
+# class VerifyOTPView(views.APIView):
+#     """
+#     Verify OTP
+#     POST /api/users/verify/confirm-otp/
+#     """
+#     permission_classes = [IsAuthenticated]
     
-    def post(self, request):
-        serializer = OTPVerificationSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+#     def post(self, request):
+#         serializer = OTPVerificationSerializer(data=request.data)
+#         serializer.is_valid(raise_exception=True)
         
-        user = request.user
-        otp_code = serializer.validated_data['otp_code']
-        otp_type = serializer.validated_data['otp_type']
+#         user = request.user
+#         otp_code = serializer.validated_data['otp_code']
+#         otp_type = serializer.validated_data['otp_type']
         
-        try:
-            otp = OTPVerification.objects.get(
-                user=user,
-                otp_code=otp_code,
-                otp_type=otp_type,
-                is_used=False,
-                expires_at__gte=timezone.now()
-            )
+#         try:
+#             otp = OTPVerification.objects.get(
+#                 user=user,
+#                 otp_code=otp_code,
+#                 otp_type=otp_type,
+#                 is_used=False,
+#                 expires_at__gte=timezone.now()
+#             )
             
-            # Mark user as verified
-            user.is_verified = True
-            user.save()
+#             # Mark user as verified
+#             user.is_verified = True
+#             user.save()
             
-            # Mark OTP as used
-            otp.is_used = True
-            otp.save()
+#             # Mark OTP as used
+#             otp.is_used = True
+#             otp.save()
             
-            return Response({
-                'message': 'Verification successful'
-            })
-        except OTPVerification.DoesNotExist:
-            return Response({
-                'error': 'Invalid or expired OTP'
-            }, status=status.HTTP_400_BAD_REQUEST)
+#             return Response({
+#                 'message': 'Verification successful'
+#             })
+#         except OTPVerification.DoesNotExist:
+#             return Response({
+#                 'error': 'Invalid or expired OTP'
+#             }, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ProviderListView(generics.ListAPIView):
@@ -333,7 +335,7 @@ class UserStatsView(views.APIView):
             }
             cache.set(cache_key, stats, 300)  # Cache for 5 minutes
         
-        return Response(stats)validated_data['email']
+        return Response(stats).validated_data['email']
         
         try:
             user = User.objects.get(email=email)
@@ -373,4 +375,5 @@ class PasswordResetConfirmView(views.APIView):
         serializer = PasswordResetConfirmSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         
-        email = serializer.
+        # email = serializer.
+        pass

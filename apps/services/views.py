@@ -9,16 +9,16 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django.core.cache import cache
 from django.db.models import Q, Count, Avg
 
-from apps.services.models import (
+from services.models import (
     ServiceCategory, Service, ServiceAvailability, ServiceArea
 )
-from apps.services.serializers import (
+from services.serializers import (
     ServiceCategorySerializer, ServiceListSerializer,
     ServiceDetailSerializer, ServiceCreateUpdateSerializer,
     ServiceAvailabilitySerializer, ServiceAreaSerializer
 )
-from apps.services.filters import ServiceFilter
-from apps.users.permissions import IsServiceProvider, IsOwnerOrAdmin
+from services.filters import ServiceFilter
+from users.permissions import IsServiceProvider, IsOwnerOrAdmin
 
 
 class ServiceCategoryListView(generics.ListAPIView):
@@ -99,7 +99,7 @@ class ServiceDetailView(generics.RetrieveAPIView):
         instance = self.get_object()
         
         # Increment view count asynchronously
-        from apps.services.tasks import increment_service_views
+        from services.tasks import increment_service_views
         increment_service_views.delay(instance.id)
         
         serializer = self.get_serializer(instance)

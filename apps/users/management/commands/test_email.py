@@ -5,7 +5,7 @@ Usage: python manage.py test_email your-email@example.com
 from django.core.management.base import BaseCommand
 from django.conf import settings
 from core.email_utils import EmailService
-from apps.users.models import User
+from users.models import User
 
 
 class Command(BaseCommand):

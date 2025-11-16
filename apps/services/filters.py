@@ -2,7 +2,7 @@
 Django filters for Service queries
 """
 import django_filters
-from apps.services.models import Service
+from services.models import Service
 
 
 class ServiceFilter(django_filters.FilterSet):

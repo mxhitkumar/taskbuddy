@@ -6,13 +6,13 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.db.models import Avg
 
-from apps.reviews.models import Review, ReviewResponse, ReviewHelpful
-from apps.reviews.serializers import (
+from reviews.models import Review, ReviewResponse, ReviewHelpful
+from reviews.serializers import (
     ReviewListSerializer, ReviewDetailSerializer,
     ReviewCreateSerializer, ReviewUpdateSerializer,
     ReviewResponseCreateSerializer, ReviewHelpfulSerializer
 )
-from apps.users.permissions import IsCustomer, IsServiceProvider, IsOwnerOrAdmin
+from users.permissions import IsCustomer, IsServiceProvider, IsOwnerOrAdmin
 
 
 class ReviewCreateView(generics.CreateAPIView):
@@ -29,7 +29,7 @@ class ReviewCreateView(generics.CreateAPIView):
         review = serializer.save()
         
         # Update provider and service ratings
-        from apps.reviews.tasks import update_ratings
+        from reviews.tasks import update_ratings
         update_ratings.delay(review.provider.id, review.service.id)
         
         return Response(
@@ -118,7 +118,7 @@ class ReviewDeleteView(generics.DestroyAPIView):
         instance.save()
         
         # Update ratings
-        from apps.reviews.tasks import update_ratings
+        from reviews.tasks import update_ratings
         update_ratings.delay(instance.provider.id, instance.service.id)
 
 

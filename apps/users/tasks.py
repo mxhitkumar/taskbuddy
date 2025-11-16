@@ -11,7 +11,7 @@ def clean_expired_otps():
     """
     Clean up expired OTP verification codes
     """
-    from apps.users.models import EmailOTP
+    from users.models import EmailOTP
     
     # Mark as expired
     expired_time = timezone.now()
@@ -35,7 +35,7 @@ def send_welcome_email_async(user_id):
     """
     Send welcome email to new users
     """
-    from apps.users.models import User
+    from users.models import User
     from core.email_utils import EmailService
     
     try:
@@ -51,7 +51,7 @@ def send_verification_email_async(user_id, otp_code):
     """
     Send email verification OTP
     """
-    from apps.users.models import User
+    from users.models import User
     from core.email_utils import EmailService
     
     try:
@@ -67,7 +67,7 @@ def send_password_reset_email_async(user_id, otp_code):
     """
     Send password reset OTP
     """
-    from apps.users.models import User
+    from users.models import User
     from core.email_utils import EmailService
     
     try:
@@ -83,7 +83,7 @@ def check_unverified_users():
     """
     Send reminder emails to unverified users after 24 hours
     """
-    from apps.users.models import User
+    from users.models import User
     from core.email_utils import EmailService
     
     # Find users who registered more than 24 hours ago but haven't verified

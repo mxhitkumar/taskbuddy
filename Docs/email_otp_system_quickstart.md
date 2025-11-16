@@ -42,7 +42,7 @@ python manage.py shell
 
 ```python
 from core.email_utils import EmailService
-from apps.users.models import User
+from users.models import User
 
 # Get any user or create one
 user = User.objects.first()

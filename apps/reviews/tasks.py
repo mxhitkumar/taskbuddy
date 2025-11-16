@@ -10,9 +10,9 @@ def update_ratings(provider_id, service_id):
     """
     Update provider and service ratings after review changes
     """
-    from apps.users.models import ServiceProviderProfile
-    from apps.services.models import Service
-    from apps.reviews.models import Review
+    from users.models import ServiceProviderProfile
+    from services.models import Service
+    from reviews.models import Review
     
     # Update provider profile ratings
     try:

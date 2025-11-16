@@ -187,16 +187,16 @@ python manage.py otp_stats --detailed
 
 ```bash
 # Run all OTP tests
-python manage.py test apps.users.tests.test_email_otp
+python manage.py test users.tests.test_email_otp
 
 # Run specific test class
-python manage.py test apps.users.tests.test_email_otp.EmailOTPModelTestCase
+python manage.py test users.tests.test_email_otp.EmailOTPModelTestCase
 
 # Run specific test
-python manage.py test apps.users.tests.test_email_otp.EmailOTPModelTestCase.test_otp_verify_success
+python manage.py test users.tests.test_email_otp.EmailOTPModelTestCase.test_otp_verify_success
 
 # Run with coverage
-pytest apps/users/tests/test_email_otp.py --cov=apps.users
+pytest apps/users/tests/test_email_otp.py --cov=users
 ```
 
 **Test Coverage:**
@@ -257,7 +257,7 @@ python manage.py shell
 #### 1. Check User Verification Status
 
 ```python
-from apps.users.models import User
+from users.models import User
 
 # Get user
 user = User.objects.get(email='user@example.com')
@@ -280,7 +280,7 @@ user.save()
 #### 3. Generate OTP Manually
 
 ```python
-from apps.users.models import EmailOTP
+from users.models import EmailOTP
 from datetime import timedelta
 import random
 
@@ -298,7 +298,7 @@ print(f"OTP: {otp_code}")
 #### 4. Check OTP History
 
 ```python
-from apps.users.models import EmailOTP
+from users.models import EmailOTP
 
 # Recent OTPs for user
 otps = EmailOTP.objects.filter(user=user).order_by('-created_at')[:5]
@@ -358,7 +358,7 @@ python manage.py clean_otps --days=7
 
 # Test before changes
 python manage.py test_email admin@example.com
-python manage.py test apps.users.tests.test_email_otp
+python manage.py test users.tests.test_email_otp
 ```
 
 ### Troubleshooting
@@ -426,7 +426,7 @@ python manage.py test_email problematic-user@example.com
 
 # View user's OTP history (in shell)
 python manage.py shell
->>> from apps.users.models import EmailOTP, User
+>>> from users.models import EmailOTP, User
 >>> user = User.objects.get(email='problematic-user@example.com')
 >>> EmailOTP.objects.filter(user=user).order_by('-created_at')
 
@@ -455,7 +455,7 @@ Create `/etc/cron.d/marketplace-otp`:
 # .github/workflows/test.yml
 - name: Test Email System
   run: |
-    python manage.py test apps.users.tests.test_email_otp
+    python manage.py test users.tests.test_email_otp
     python manage.py test_email test@example.com
 ```
 
