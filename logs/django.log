@@ -69,3 +69,6 @@ INFO 2025-11-16 15:09:06,781 autoreload 145750 125692205990016 /home/taskbuddy/t
 INFO 2025-11-16 15:09:07,314 autoreload 145782 137141712019584 Watching for file changes with StatReloader
 INFO 2025-11-16 15:09:25,144 autoreload 145782 137141712019584 /home/taskbuddy/taskbuddy/apps/users/views.py changed, reloading.
 INFO 2025-11-16 15:09:25,680 autoreload 145913 129927720779904 Watching for file changes with StatReloader
+INFO 2025-11-16 15:52:01,283 autoreload 162496 137510466404480 Watching for file changes with StatReloader
+INFO 2025-11-16 16:02:32,951 autoreload 167580 127054317994112 Watching for file changes with StatReloader
+INFO 2025-11-18 15:28:23,384 autoreload 1949 134736170807424 Watching for file changes with StatReloader

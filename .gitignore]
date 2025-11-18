@@ -1,0 +1,71 @@
+# Django
+*.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
+
+# If using Django migrations
+*/migrations/__pycache__/
+*/migrations/*.pyc
+
+# Python
+*.py[cod]
+*$py.class
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environment
+.venv/
+venv/
+ENV/
+
+# Environment variables
+*.env
+.env.*
+
+# Static files (collected static)
+staticfiles/
+static/
+
+# MacOS
+.DS_Store
+
+# VS Code
+.vscode/
+
+# PyCharm
+.idea/
+
+# Coverage and test reports
+.coverage
+coverage.xml
+htmlcov/
+
+# MyPy
+.mypy_cache/
+
+# Pytest
+.pytest_cache/
+
+# Local development overrides
+*.local

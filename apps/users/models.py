@@ -2,10 +2,12 @@
 User models with role-based access control
 Optimized for high-scale operations with proper indexing
 """
+
+from django.utils import timezone
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from users.managers import UserManager
+from apps.users.managers import UserManager
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -187,7 +189,7 @@ class ServiceProviderProfile(models.Model):
         Update denormalized rating statistics
         Called by signals when reviews are added/updated
         """
-        from reviews.models import Review
+        from apps.reviews.models import Review
         from django.db.models import Avg, Count
         
         stats = Review.objects.filter(
@@ -248,7 +250,6 @@ class EmailOTP(models.Model):
     
     def is_valid(self):
         """Check if OTP is still valid"""
-        from django.utils import timezone
         return (
             not self.is_used and 
             not self.is_expired and 
@@ -258,7 +259,6 @@ class EmailOTP(models.Model):
     
     def verify(self, code):
         """Verify OTP code"""
-        from django.utils import timezone
         
         self.attempts += 1
         
@@ -275,3 +275,32 @@ class EmailOTP(models.Model):
         
         self.save()
         return False
+
+    
+class OTPVerification(models.Model):
+    """
+    OTP for email/phone verification
+    """
+    
+    class OTPType(models.TextChoices):
+        EMAIL = 'EMAIL', _('Email Verification')
+        PHONE = 'PHONE', _('Phone Verification')
+        PASSWORD_RESET = 'PASSWORD_RESET', _('Password Reset')
+    
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='otps')
+    otp_type = models.CharField(max_length=20, choices=OTPType.choices)
+    otp_code = models.CharField(max_length=6)
+    is_used = models.BooleanField(default=False)
+    expires_at = models.DateTimeField(db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        db_table = 'otp_verifications'
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['user', 'otp_type', 'is_used']),
+            models.Index(fields=['expires_at']),
+        ]
+    
+    def __str__(self):
+        return f"OTP for {self.user.email} - {self.otp_type}"

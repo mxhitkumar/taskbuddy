@@ -11,7 +11,7 @@ from datetime import timedelta
 import random
 # OTPVerifipacker andcation
 # ServiceProviderProfile
-from users.models import User
+from users.models import User, ServiceProviderProfile, OTPVerification
 from users.serializers import (
     UserRegistrationSerializer, LoginSerializer, UserSerializer,
     PasswordChangeSerializer, PasswordResetRequestSerializer,
