@@ -96,3 +96,25 @@ INFO 2025-12-25 14:54:04,433 autoreload 317120 131587252125696 Watching for file
 INFO 2025-12-25 14:54:28,217 autoreload 317348 138114230296576 Watching for file changes with StatReloader
 INFO 2025-12-25 14:54:59,102 autoreload 317571 139900263043072 Watching for file changes with StatReloader
 INFO 2025-12-25 14:55:07,061 autoreload 317676 123389797507072 Watching for file changes with StatReloader
+INFO 2025-12-25 14:56:45,230 autoreload 318621 130878977089536 Watching for file changes with StatReloader
+INFO 2025-12-25 14:57:16,022 autoreload 318866 140249284214784 Watching for file changes with StatReloader
+INFO 2025-12-25 14:57:33,524 autoreload 318866 140249284214784 /home/mohit/code/taskbuddy/config/settings/development.py changed, reloading.
+INFO 2025-12-25 14:57:33,938 autoreload 319018 133380668387328 Watching for file changes with StatReloader
+INFO 2025-12-25 15:16:15,419 autoreload 319018 133380668387328 /home/mohit/code/taskbuddy/config/settings/base.py changed, reloading.
+INFO 2025-12-25 15:16:16,019 autoreload 327826 129501564030976 Watching for file changes with StatReloader
+INFO 2025-12-25 15:16:19,327 autoreload 327826 129501564030976 /home/mohit/code/taskbuddy/config/settings/base.py changed, reloading.
+INFO 2025-12-25 15:16:28,804 autoreload 327958 138130448011264 Watching for file changes with StatReloader
+INFO 2025-12-25 15:17:26,942 autoreload 327958 138130448011264 /home/mohit/code/taskbuddy/config/settings/development.py changed, reloading.
+INFO 2025-12-25 15:17:27,354 autoreload 328378 126142572724224 Watching for file changes with StatReloader
+INFO 2025-12-25 15:17:31,578 autoreload 328442 135343285452800 Watching for file changes with StatReloader
+INFO 2025-12-25 15:17:45,028 autoreload 328442 135343285452800 /home/mohit/code/taskbuddy/config/settings/development.py changed, reloading.
+INFO 2025-12-25 15:17:45,404 autoreload 328546 135892227440640 Watching for file changes with StatReloader
+INFO 2025-12-25 15:18:18,689 autoreload 328939 130895376642048 Watching for file changes with StatReloader
+INFO 2025-12-25 15:49:34,162 autoreload 339467 135755581149184 Watching for file changes with StatReloader
+INFO 2025-12-25 15:50:39,399 autoreload 339467 135755581149184 /home/mohit/code/taskbuddy/config/settings/base.py changed, reloading.
+INFO 2025-12-25 15:50:39,837 autoreload 339880 127790101786624 Watching for file changes with StatReloader
+INFO 2025-12-25 15:50:48,202 autoreload 339880 127790101786624 /home/mohit/code/taskbuddy/config/settings/development.py changed, reloading.
+INFO 2025-12-25 15:50:48,618 autoreload 339982 132798702317568 Watching for file changes with StatReloader
+INFO 2025-12-25 15:53:08,201 autoreload 339982 132798702317568 /home/mohit/code/taskbuddy/config/wsgi.py changed, reloading.
+INFO 2025-12-25 15:53:08,569 autoreload 340849 125903262007296 Watching for file changes with StatReloader
+INFO 2025-12-25 15:53:17,941 autoreload 340954 134329386274816 Watching for file changes with StatReloader
