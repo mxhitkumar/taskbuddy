@@ -22,8 +22,8 @@ urlpatterns = [
     path('password/reset/confirm/', views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     
     # Email Verification
-    path('verify/send-otp/', views.SendEmailVerificationOTPView.as_view(), name='send_verification_otp'),
-    path('verify/confirm-otp/', views.VerifyEmailOTPView.as_view(), name='verify_email_otp'),
+    path('verify/send-otp/', views.SendVerificationOTPView.as_view(), name='send_verification_otp'),
+    # path('verify/confirm-otp/', views.VerifyEmailOTPView.as_view(), name='verify_email_otp'),
     
     # Provider Management
     path('providers/', views.ProviderListView.as_view(), name='provider_list'),

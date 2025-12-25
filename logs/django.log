@@ -72,3 +72,27 @@ INFO 2025-11-16 15:09:25,680 autoreload 145913 129927720779904 Watching for file
 INFO 2025-11-16 15:52:01,283 autoreload 162496 137510466404480 Watching for file changes with StatReloader
 INFO 2025-11-16 16:02:32,951 autoreload 167580 127054317994112 Watching for file changes with StatReloader
 INFO 2025-11-18 15:28:23,384 autoreload 1949 134736170807424 Watching for file changes with StatReloader
+INFO 2025-12-25 13:22:09,628 autoreload 286218 134736586498048 Watching for file changes with StatReloader
+INFO 2025-12-25 13:39:31,099 autoreload 291856 136041003589632 Watching for file changes with StatReloader
+INFO 2025-12-25 14:00:24,518 autoreload 298548 136341078790144 Watching for file changes with StatReloader
+INFO 2025-12-25 14:15:07,915 autoreload 298548 136341078790144 /home/mohit/code/taskbuddy/apps/users/urls.py changed, reloading.
+INFO 2025-12-25 14:15:08,315 autoreload 303270 130947261415424 Watching for file changes with StatReloader
+INFO 2025-12-25 14:21:54,603 autoreload 303270 130947261415424 /home/mohit/code/taskbuddy/apps/users/urls.py changed, reloading.
+INFO 2025-12-25 14:21:54,960 autoreload 305511 130307579105280 Watching for file changes with StatReloader
+INFO 2025-12-25 14:22:18,453 autoreload 305511 130307579105280 /home/mohit/code/taskbuddy/apps/services/views.py changed, reloading.
+INFO 2025-12-25 14:22:18,823 autoreload 305700 137778098872320 Watching for file changes with StatReloader
+INFO 2025-12-25 14:49:20,018 autoreload 305700 137778098872320 /home/mohit/code/taskbuddy/apps/services/views.py changed, reloading.
+INFO 2025-12-25 14:49:20,390 autoreload 315366 124002389385216 Watching for file changes with StatReloader
+INFO 2025-12-25 14:49:53,058 autoreload 315366 124002389385216 /home/mohit/code/taskbuddy/apps/services/views.py changed, reloading.
+INFO 2025-12-25 14:49:53,424 autoreload 315607 125463817678848 Watching for file changes with StatReloader
+INFO 2025-12-25 14:53:41,158 autoreload 315607 125463817678848 /home/mohit/code/taskbuddy/apps/users/urls.py changed, reloading.
+INFO 2025-12-25 14:53:41,581 autoreload 316888 131591415132160 Watching for file changes with StatReloader
+INFO 2025-12-25 14:53:56,928 autoreload 316888 131591415132160 /home/mohit/code/taskbuddy/apps/users/views.py changed, reloading.
+INFO 2025-12-25 14:53:57,358 autoreload 317028 132773601480704 Watching for file changes with StatReloader
+INFO 2025-12-25 14:54:00,508 autoreload 317028 132773601480704 /home/mohit/code/taskbuddy/apps/users/views.py changed, reloading.
+INFO 2025-12-25 14:54:00,878 autoreload 317078 140371012513792 Watching for file changes with StatReloader
+INFO 2025-12-25 14:54:04,056 autoreload 317078 140371012513792 /home/mohit/code/taskbuddy/apps/users/urls.py changed, reloading.
+INFO 2025-12-25 14:54:04,433 autoreload 317120 131587252125696 Watching for file changes with StatReloader
+INFO 2025-12-25 14:54:28,217 autoreload 317348 138114230296576 Watching for file changes with StatReloader
+INFO 2025-12-25 14:54:59,102 autoreload 317571 139900263043072 Watching for file changes with StatReloader
+INFO 2025-12-25 14:55:07,061 autoreload 317676 123389797507072 Watching for file changes with StatReloader
